@@ -2,7 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
-from flask_app.constant import getConfig
+from ContentCurator.flask_app.constant import getConfig
 load_dotenv()
 
 
@@ -10,8 +10,10 @@ def search_engine(query):
 
 
     endpoint = "https://www.googleapis.com/customsearch/v1"
-
-    response = requests.get(endpoint,params=getConfig.get_config())
+    config = getConfig()
+    params = config.get_config()
+    params["q"] = query
+    response = requests.get(endpoint,params=params)
 
     if response.status_code == 200:
         results = response.json().get('items',[])
@@ -43,11 +45,12 @@ def get_para(link):
             unwanted.decompose()
         text = p.get_text(separator=" ", strip=True)
         cleand.append(text)
-    return "\n\n".join(cleand)
+    return "\n".join(cleand)
         
         
 def get_data(query):
-    response = search_engine(query,getConfig.get_config())
+    config = getConfig()
+    response = search_engine(query)
     data = []
     for r in response:
         url = r['link']

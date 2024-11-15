@@ -4,3 +4,4 @@ openai==1.35.15
 requests
 streamlit
 beautifulsoup4
+-e .
